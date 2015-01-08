@@ -47,7 +47,7 @@ public class RpcNettyConnector extends AbstractRpcConnector{
 	public void startService() {
 		if(this.channel==null){
 			eventLoopGroup = new NioEventLoopGroup(3);
-			Bootstrap boot = NettyUtils.buildBootStrap(eventLoopGroup);
+			Bootstrap boot = NettyUtils.buildBootStrap(eventLoopGroup,this);
 			boot.remoteAddress(host, port);
 			try {
 				ChannelFuture f = boot.connect().sync();
@@ -86,7 +86,7 @@ public class RpcNettyConnector extends AbstractRpcConnector{
 		ChannelFuture future = channel.writeAndFlush(rpc);
 		try {
 			future.await(timeout);
-			logger.info("sended:"+future.isSuccess());
+			logger.info("sended:"+future.isSuccess()+" index:"+rpc.getIndex());
 			return future.isSuccess();
 		} catch (InterruptedException e) {
 			return false;
