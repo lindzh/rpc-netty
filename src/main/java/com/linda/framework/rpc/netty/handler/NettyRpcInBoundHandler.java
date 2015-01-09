@@ -2,6 +2,7 @@ package com.linda.framework.rpc.netty.handler;
 
 import io.netty.channel.AbstractChannel;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -18,6 +19,7 @@ import com.linda.framework.rpc.net.AbstractRpcConnector;
 import com.linda.framework.rpc.net.RpcCallListener;
 import com.linda.framework.rpc.netty.RpcNettyConnector;
 
+@Sharable
 public class NettyRpcInBoundHandler extends SimpleChannelInboundHandler<RpcObject>{
 	
 	private AbstractRpcConnector parentConnector;
@@ -46,24 +48,20 @@ public class NettyRpcInBoundHandler extends SimpleChannelInboundHandler<RpcObjec
 	
 	@Override
 	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-		logger.info("channelRegistered");
 		super.channelRegistered(ctx);
 	}
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		logger.info("channelActive");
 		RpcNettyConnector connector = this.newNettyConnector((AbstractChannel)ctx.channel());
 		connector.startService();
 		String channelKey = this.getChannelKey(ctx.channel());
-		System.out.println("key:"+channelKey);
 		connectorMap.put(channelKey, connector);
 		super.channelRegistered(ctx);
 	}
 
 	@Override
 	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-		logger.info("channelUnregistered");
 		String channelKey = this.getChannelKey(ctx.channel());
 		RpcNettyConnector connector = connectorMap.get(channelKey);
 		if(connector!=null){
@@ -76,7 +74,6 @@ public class NettyRpcInBoundHandler extends SimpleChannelInboundHandler<RpcObjec
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
 			throws Exception {
-		logger.info("exceptionCaught");
 		String channelKey = this.getChannelKey(ctx.channel());
 		RpcNettyConnector connector = connectorMap.get(channelKey);
 		if(connector!=null){
@@ -89,12 +86,9 @@ public class NettyRpcInBoundHandler extends SimpleChannelInboundHandler<RpcObjec
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, RpcObject msg)
 			throws Exception {
-		logger.info("channelRead0:"+msg.getIndex());
 		String channelKey = this.getChannelKey(ctx.channel());
 		RpcNettyConnector connector = connectorMap.get(channelKey);
 		if(connector!=null){
-			List<RpcCallListener> listeners = connector.getCallListeners();
-			logger.info("lisnteners:"+listeners.size());
 			connector.fireCall(msg);
 		}else{
 			logger.error("can't find connector");

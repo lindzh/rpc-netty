@@ -86,7 +86,6 @@ public class RpcNettyConnector extends AbstractRpcConnector{
 		ChannelFuture future = channel.writeAndFlush(rpc);
 		try {
 			future.await(timeout);
-			logger.info("sended:"+future.isSuccess()+" index:"+rpc.getIndex());
 			return future.isSuccess();
 		} catch (InterruptedException e) {
 			return false;
