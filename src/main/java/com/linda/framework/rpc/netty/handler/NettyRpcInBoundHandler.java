@@ -32,8 +32,11 @@ public class NettyRpcInBoundHandler extends SimpleChannelInboundHandler<RpcObjec
 	
 	private String getChannelKey(Channel channel){
 		InetSocketAddress remoteAddress = (InetSocketAddress)channel.remoteAddress();
-		InetAddress address = remoteAddress.getAddress();
-		return address.getHostAddress()+":"+remoteAddress.getPort();
+		if(remoteAddress!=null){
+			InetAddress address = remoteAddress.getAddress();
+			return address.getHostAddress()+":"+remoteAddress.getPort();
+		}
+		return null;
 	}
 	
 	private RpcNettyConnector newNettyConnector(AbstractChannel channel){
@@ -56,17 +59,21 @@ public class NettyRpcInBoundHandler extends SimpleChannelInboundHandler<RpcObjec
 		RpcNettyConnector connector = this.newNettyConnector((AbstractChannel)ctx.channel());
 		connector.startService();
 		String channelKey = this.getChannelKey(ctx.channel());
-		connectorMap.put(channelKey, connector);
+		if(channelKey!=null){
+			connectorMap.put(channelKey, connector);
+		}
 		super.channelRegistered(ctx);
 	}
 
 	@Override
 	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
 		String channelKey = this.getChannelKey(ctx.channel());
-		RpcNettyConnector connector = connectorMap.get(channelKey);
-		if(connector!=null){
-			connector.stopService();
-			connectorMap.remove(channelKey);
+		if(channelKey!=null){
+			RpcNettyConnector connector = connectorMap.get(channelKey);
+			if(connector!=null){
+				connector.stopService();
+				connectorMap.remove(channelKey);
+			}
 		}
 		super.channelUnregistered(ctx);
 	}
@@ -75,10 +82,12 @@ public class NettyRpcInBoundHandler extends SimpleChannelInboundHandler<RpcObjec
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
 			throws Exception {
 		String channelKey = this.getChannelKey(ctx.channel());
-		RpcNettyConnector connector = connectorMap.get(channelKey);
-		if(connector!=null){
-			connectorMap.remove(channelKey);
-			connector.handleNetException((Exception)cause);
+		if(channelKey!=null){
+			RpcNettyConnector connector = connectorMap.get(channelKey);
+			if(connector!=null){
+				connectorMap.remove(channelKey);
+				connector.handleNetException((Exception)cause);
+			}
 		}
 		super.exceptionCaught(ctx, cause);
 	}
@@ -87,11 +96,13 @@ public class NettyRpcInBoundHandler extends SimpleChannelInboundHandler<RpcObjec
 	protected void channelRead0(ChannelHandlerContext ctx, RpcObject msg)
 			throws Exception {
 		String channelKey = this.getChannelKey(ctx.channel());
-		RpcNettyConnector connector = connectorMap.get(channelKey);
-		if(connector!=null){
-			connector.fireCall(msg);
-		}else{
-			logger.error("can't find connector");
+		if(channelKey!=null){
+			RpcNettyConnector connector = connectorMap.get(channelKey);
+			if(connector!=null){
+				connector.fireCall(msg);
+			}else{
+				logger.error("can't find connector");
+			}
 		}
 	}
 

@@ -23,7 +23,7 @@ public class NettyClientTest implements Runnable{
 	public static void main(String[] args) throws InterruptedException {
 		SimpleRpcClient client = new SimpleRpcClient();
 		client.setHost("127.0.0.1");
-		client.setPort(4332);
+		client.setPort(5555);
 		client.setConnectorClass(RpcNettyConnector.class);
 		LoginRpcService loginRpcService = client.register(LoginRpcService.class);
 		client.startService();
