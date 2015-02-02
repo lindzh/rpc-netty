@@ -45,6 +45,7 @@ public class RpcNettyConnector extends AbstractRpcConnector{
 
 	@Override
 	public void startService() {
+		super.startService();
 		if(this.channel==null){
 			eventLoopGroup = new NioEventLoopGroup(3);
 			Bootstrap boot = NettyUtils.buildBootStrap(eventLoopGroup,this);
@@ -62,7 +63,7 @@ public class RpcNettyConnector extends AbstractRpcConnector{
 
 	@Override
 	public void stopService() {
-		this.executor.shutdown();
+		super.stopService();
 		this.rpcContext.clear();
 		this.sendQueueCache.clear();
 		this.callListeners.clear();

@@ -8,15 +8,15 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
 import com.linda.framework.rpc.RpcObject;
 import com.linda.framework.rpc.net.AbstractRpcAcceptor;
 import com.linda.framework.rpc.net.AbstractRpcConnector;
-import com.linda.framework.rpc.net.RpcCallListener;
 import com.linda.framework.rpc.netty.RpcNettyConnector;
 
 @Sharable
@@ -43,6 +43,8 @@ public class NettyRpcInBoundHandler extends SimpleChannelInboundHandler<RpcObjec
 		RpcNettyConnector connector = new RpcNettyConnector(channel);
 		if(parentAcceptor!=null){
 			parentAcceptor.addConnectorListeners(connector);
+			connector.setExecutorService(parentAcceptor.getExecutorService());
+			connector.setExecutorSharable(true);
 		}else if(parentConnector!=null){
 			parentConnector.addConnectorListeners(connector);
 		}

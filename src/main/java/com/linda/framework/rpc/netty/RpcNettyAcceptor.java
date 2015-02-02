@@ -36,6 +36,7 @@ public class RpcNettyAcceptor extends AbstractRpcAcceptor {
 
 	@Override
 	public void startService() {
+		super.startService();
 		this.startListeners();
 		if(this.eventLoopGroup == null){
 			eventLoopGroup = new NioEventLoopGroup(eventLoopThread);
@@ -53,6 +54,7 @@ public class RpcNettyAcceptor extends AbstractRpcAcceptor {
 
 	@Override
 	public void stopService() {
+		super.stopService();
 		if(this.channel!=null){
 			this.channel.close();
 		}
