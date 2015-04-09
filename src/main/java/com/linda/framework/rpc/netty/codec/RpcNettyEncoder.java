@@ -26,7 +26,7 @@ public class RpcNettyEncoder extends MessageToByteEncoder<RpcObject>{
 		out.writeInt(msg.getIndex());
 		out.writeInt(msg.getLength());
 		if(msg.getLength()>0){
-			if(msg.getLength()>RpcUtils.MEM_2M){
+			if(msg.getLength()>RpcUtils.MEM_1M){
 				throw new RpcException("rpc data too long "+ msg.getLength());
 			}
 			out.writeBytes(msg.getData());
