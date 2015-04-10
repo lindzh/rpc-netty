@@ -45,6 +45,7 @@ public class RpcNettyAcceptor extends AbstractRpcAcceptor {
 			try {
 				f.sync();
 				channel = (AbstractChannel)f.channel();
+				this.fireStartNetListeners();
 			} catch (InterruptedException e) {
 				logger.info("server interrupted start to exist");
 				this.stopService();

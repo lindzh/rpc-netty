@@ -54,6 +54,7 @@ public class RpcNettyConnector extends AbstractRpcConnector{
 				ChannelFuture f = boot.connect().sync();
 				f.await();
 				this.channel = (AbstractChannel)f.channel();
+				this.fireStartNetListeners();
 			} catch (InterruptedException e) {
 				logger.info("interrupted start to exist");
 				this.stopService();
@@ -77,12 +78,6 @@ public class RpcNettyConnector extends AbstractRpcConnector{
 	}
 
 	@Override
-	public void handleNetException(Exception e) {
-		logger.error(this.getHost()+":"+this.getPort()+" "+e+"     connector start to shutdown");
-		this.stopService();
-	}
-
-	@Override
 	public boolean sendRpcObject(RpcObject rpc, int timeout) {
 		ChannelFuture future = channel.writeAndFlush(rpc);
 		try {
@@ -91,5 +86,11 @@ public class RpcNettyConnector extends AbstractRpcConnector{
 		} catch (InterruptedException e) {
 			return false;
 		}
+	}
+
+	@Override
+	public void handleConnectorException(Exception e) {
+		logger.error(this.getHost()+":"+this.getPort()+" "+e+"     connector start to shutdown");
+		this.stopService();
 	}
 }
