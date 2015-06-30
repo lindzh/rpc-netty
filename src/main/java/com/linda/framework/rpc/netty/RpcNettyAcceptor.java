@@ -41,7 +41,7 @@ public class RpcNettyAcceptor extends AbstractRpcAcceptor {
 		if(this.eventLoopGroup == null){
 			eventLoopGroup = new NioEventLoopGroup(eventLoopThread);
 			ServerBootstrap bootstrap = NettyUtils.buildServerBootStrap(eventLoopGroup,this);
-			ChannelFuture f = bootstrap.bind(this.host, this.port);
+			ChannelFuture f = bootstrap.bind(this.getHost(), this.getPort());
 			try {
 				f.sync();
 				channel = (AbstractChannel)f.channel();

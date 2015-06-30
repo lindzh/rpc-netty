@@ -49,7 +49,7 @@ public class RpcNettyConnector extends AbstractRpcConnector{
 		if(this.channel==null){
 			eventLoopGroup = new NioEventLoopGroup(3);
 			Bootstrap boot = NettyUtils.buildBootStrap(eventLoopGroup,this);
-			boot.remoteAddress(host, port);
+			boot.remoteAddress(this.getHost(), this.getPort());
 			try {
 				ChannelFuture f = boot.connect().sync();
 				f.await();
