@@ -1,24 +1,5 @@
-#### Rpc netty支持
+##### 轻量级分布式服务化框架
 
->加入rpc对netty的支持，网络层。和rpc框架实现的nio，oio完全兼容，通信协议一样
+![Alt text](http://img2.ph.126.net/oMJOdxjM93wKtlsF764_DQ==/6630102394491146555.jpg)
 
-##### 启动服务端
-
-```java
-SimpleRpcServer rpcServer = new SimpleRpcServer();
-rpcServer.setAcceptor(new RpcNettyAcceptor());
-rpcServer.setHost("127.0.0.1");
-rpcServer.setPort(5555);
-rpcServer.register(LoginRpcService.class, new LoginRpcServiceImpl());
-rpcServer.startService();
-```
-##### 启动客户端
-
-```java
-SimpleRpcClient client = new SimpleRpcClient();
-client.setHost("127.0.0.1");
-client.setPort(5555);
-client.setConnectorClass(RpcNettyConnector.class);
-LoginRpcService loginRpcService = client.register(LoginRpcService.class);
-client.startService();
-```
+项目已移动至：https://github.com/lindzh/hasting
